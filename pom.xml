@@ -13,9 +13,9 @@
     <description>Performance and load tests for ILPv4 Connectors.</description>
 
     <scm>
-        <connection>scm:git:git://github.com/interledger4j/connector-performance.git</connection>
-        <url>scm:git:git@github.com:interledger4j/connector-performance.git</url>
-        <developerConnection>scm:git:git@github.com:interledger4j/connector-performance.git</developerConnection>
+        <connection>scm:git:git://github.com/interledger4j/ilp-performance.git</connection>
+        <url>scm:git:git@github.com:interledger4j/ilp-performance.git</url>
+        <developerConnection>scm:git:git@github.com:interledger4j/ilp-performance.git</developerConnection>
     </scm>
 
     <properties>
@@ -27,6 +27,7 @@
         <gatling-plugin.version>3.0.5</gatling-plugin.version>
         <!-- org.jacoco:jacoc-maven-plugin -->
         <jacoco.propertyName>argLine</jacoco.propertyName>
+        <scala.version>2.13.1</scala.version>
     </properties>
 
     <dependencies>
@@ -128,6 +129,8 @@
     </profiles>
 
     <build>
+        <sourceDirectory>src/main/scala</sourceDirectory>
+        <testSourceDirectory>src/test/scala</testSourceDirectory>
         <extensions>
             <extension>
                 <groupId>kr.motd.maven</groupId>
@@ -331,6 +334,17 @@
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
                 <version>4.3.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <scalaVersion>${scala.version}</scalaVersion>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>io.gatling</groupId>
