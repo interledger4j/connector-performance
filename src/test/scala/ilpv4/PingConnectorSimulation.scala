@@ -1,4 +1,4 @@
-package org.interledger.performance.ilpv4
+package ilpv4
 
 import java.io.ByteArrayInputStream
 
@@ -49,7 +49,7 @@ class PingConnectorSimulation extends Simulation {
   )
     .exec(session=>{
 //      val packet:InterledgerFulfillPacket = session("lastResponse")
-      val packet:InterledgerFulfillPacket = session("lastResponse").as(classOf[InterledgerFulfillPacket])
+      val packet:InterledgerFulfillPacket = session("lastResponse").asInstanceOf[InterledgerFulfillPacket]
 
       //Analyse theResponse...
 
@@ -69,6 +69,10 @@ class PingConnectorSimulation extends Simulation {
 
   setUp(ping.inject(constantUsersPerSec(1) during (1 seconds))
     .protocols(httpConf))
+
+//  setUp(
+//    ping.inject(atOnceUsers(1))
+//  ).protocols(httpConf)
 
   //    .assertions(
   //      global.successfulRequests.percent.is(100),
