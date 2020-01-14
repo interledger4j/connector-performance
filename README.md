@@ -40,23 +40,31 @@ links. The first link always fulfills; the second link always rejects with a `T0
 
 ### Topology Diagram
 ```text
-                ┌───────────────────────┐                
-                │                       │                
-                │ https://jc.ilpv4.dev  │                
-                │                       │                
-                └───────────────────────┘                
-                            △                            
-             ┌──────────────┴──────────────┐             
-             ▽                             ▽             
-┌─────────────────────────┐   ┌─────────────────────────┐
-│                         │   │                         │
-│Account: lt-lb-fulfiller │   │ Account: lt-lb-rejector │
-│                         │   │                         │
-└─────────────────────────┘   └─────────────────────────┘
+ ┌──────────────────┐       ┌─────────────────────────┐      
+ │                  │       │Account: `lt-lb-ingress` │      
+ │ Load Test Sender │──────▶│  (Type: ILP-over-HTTP)  │      
+ │                  │       └─────────────────────────┘      
+ └──────────────────┘                    │                   
+                          ┌──────────────┘                   
+                          │                                  
+                          ▽                                  
+              ┌───────────────────────┐                      
+              │                       │                      
+              │    ILPv4 Connector    │                      
+              │ https://jc.ilpv4.dev  │                      
+              │                       │                      
+              └───────────────────────┘                      
+                          │                                  
+             ┌────────────┴────────────────────┐             
+             ▽                                 ▽             
+┌─────────────────────────┐       ┌─────────────────────────┐
+│Account: lt-lb-fulfiller │       │ Account: lt-lb-rejector │
+│    (Type: Loopback)     │       │    (Type: Loopback)     │
+└─────────────────────────┘       └─────────────────────────┘
 ```
 
 ### Ingress Account
-To create the `lt-ingress` account, which is used for all ingress into the connector, execute the following command:
+To create the `lt-lb-ingress` account, which is used for all ingress into the connector, execute the following command:
 
 ```text
 curl --location --request POST 'https://jc.ilpv4.dev/accounts' \
@@ -64,7 +72,7 @@ curl --location --request POST 'https://jc.ilpv4.dev/accounts' \
 --header 'Accept: application/json' \
 --header 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
 --data-raw '{
-  "accountId": "lt-ingress",
+  "accountId": "lt-lb-ingress",
   "accountRelationship": "CHILD",
   "linkType": "ILP_OVER_HTTP",
   "assetCode": "USD",
@@ -74,7 +82,7 @@ curl --location --request POST 'https://jc.ilpv4.dev/accounts' \
         "ilpOverHttp.incoming.simple.auth_token": "shh",
         "ilpOverHttp.outgoing.auth_type": "SIMPLE",
         "ilpOverHttp.outgoing.simple.auth_token": "shh",
-        "ilpOverHttp.outgoing.url": "https://money.ilpv4.dev/ilp"
+        "ilpOverHttp.outgoing.url": "https://money.ilpv4.dev/accounts/lt-lb-ingress/ilp"
    }
 }'
 ```
@@ -93,10 +101,7 @@ curl --location --request POST 'https://jc.ilpv4.dev/accounts' \
   "accountRelationship": "CHILD",
   "linkType": "LOOPBACK",
   "assetCode": "XRP",
-  "assetScale": "9",
-  "customSettings": {
-  	"simulatedRejectErrorCode":"T02"
-  }
+  "assetScale": "9"
 }'
 ```
 
@@ -128,8 +133,8 @@ This topology contains a single connector with 2 ILP-over-HTTP links that excerc
 ### Topology Diagram
 ```text
  ┌──────────────────┐       ┌─────────────────────────┐      
- │                  │       │   Account: `lt-spsp`    │      
- │ Load Test Sender │──────▶│  (Type: ILP-over-HTTP)  │      
+ │                  │       │        Account:         │      
+ │ Load Test Sender │──────▶│    `lt-spsp-ingress`    │      
  │                  │       └─────────────────────────┘      
  └──────────────────┘                    │                   
                           ┌──────────────┘                   
@@ -165,7 +170,7 @@ curl --location --request POST 'https://jc.ilpv4.dev/accounts' \
 --header 'Accept: application/json' \
 --header 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
 --data-raw '{
-  "accountId": "lt-ingress",
+  "accountId": "lt-spsp-ingress",
   "accountRelationship": "CHILD",
   "linkType": "ILP_OVER_HTTP",
   "assetCode": "USD",
@@ -175,7 +180,7 @@ curl --location --request POST 'https://jc.ilpv4.dev/accounts' \
         "ilpOverHttp.incoming.simple.auth_token": "shh",
         "ilpOverHttp.outgoing.auth_type": "SIMPLE",
         "ilpOverHttp.outgoing.simple.auth_token": "shh",
-        "ilpOverHttp.outgoing.url": "https://money.ilpv4.dev/ilp"
+        "ilpOverHttp.outgoing.url": "https://money.ilpv4.dev/accounts/lt-spsp-ingress/ilp"
    }
 }'
 ```
