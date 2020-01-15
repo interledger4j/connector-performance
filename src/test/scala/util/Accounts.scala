@@ -36,6 +36,8 @@ object Accounts {
     .linkType(LinkType.of("LOOPBACK"))
     .assetCode("XRP")
     .assetScale(9)
+    .customSettings(Map(
+      "simulatedRejectErrorCode"->"T02"
+    ).asJava)
     .build()
-
 }

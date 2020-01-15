@@ -6,18 +6,16 @@ import java.util.Random
 
 import com.google.common.primitives.UnsignedLong
 import org.interledger.codecs.ilp.InterledgerCodecContextFactory
-import org.interledger.core.{DateUtils, InterledgerAddress, InterledgerCondition, InterledgerPreparePacket}
+import org.interledger.core.{DateUtils, InterledgerAddress, InterledgerCondition, InterledgerConstants, InterledgerPreparePacket}
 
 object Prepare {
 
   def create(amount: UnsignedLong, destination: String): InterledgerPreparePacket = {
-    val conditionBytes = new Array[Byte](32)
-    new Random().nextBytes(conditionBytes)
-
+    
     InterledgerPreparePacket.builder()
       .amount(amount)
       .destination(InterledgerAddress.of(destination))
-      .executionCondition(InterledgerCondition.of(conditionBytes))
+      .executionCondition(InterledgerConstants.ALL_ZEROS_CONDITION)
       .expiresAt(DateUtils.now.plusSeconds(30)truncatedTo(ChronoUnit.MILLIS))
       .build()
   }

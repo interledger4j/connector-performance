@@ -8,16 +8,16 @@ import org.slf4j.LoggerFactory
 import util.IlpChecks._
 import util._
 
-class LoopbackFulfillSimulation extends Simulation {
+class LoopbackRejectSimulation extends Simulation {
 
-  val logger = LoggerFactory.getLogger(classOf[LoopbackFulfillSimulation])
+  val logger = LoggerFactory.getLogger(classOf[LoopbackRejectSimulation])
   val httpConf = http.baseUrl(Config.javaConnectorUrl)
 
   before {
     Admin.accountClient.createAccountAsResponse(Accounts.ingress)
-    Admin.accountClient.createAccountAsResponse(Accounts.fulfillLoopback)
+    Admin.accountClient.createAccountAsResponse(Accounts.rejectLoopback)
     try {
-      Admin.routeClient.createStaticRoute(Config.fulfillLoopbackAddress, Routes.fulfillLoopbackRoute)
+      Admin.routeClient.createStaticRoute(Config.rejectLoopbackAddress, Routes.rejectLoopbackRoute)
     }
     catch {
       case e: FeignException => {
@@ -28,12 +28,12 @@ class LoopbackFulfillSimulation extends Simulation {
     }
   }
 
-  val prepare = Prepare.create(UnsignedLong.ONE, Config.fulfillLoopbackAddress)
+  val prepare = Prepare.create(UnsignedLong.ONE, Config.rejectLoopbackAddress)
 
-  val sendPayments = scenario("send payments to fulfill loopback")
+  val sendPayments = scenario("send payments to reject loopback")
     .exec(
       ConnectorRequests.ilp(Config.ingressAccount, "shh", prepare)
-        .check(FULFILLED)
+        .check(REJECTED_T02)
     )
 
   setUp(
