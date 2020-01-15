@@ -22,6 +22,7 @@ class LoopbackFulfillSimulation extends Simulation {
   val sendPayments = scenario("send payments to fulfill loopback")
     .exec(
       ConnectorRequests.ilp(Config.ingressAccount, "shh", prepare)
+        .check()
     )
     .exec(session => {
       val packet = session("ilpResponse").as[InterledgerResponsePacket]
