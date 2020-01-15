@@ -6,11 +6,13 @@ object Config {
 
   val spspUrl = "https://money.ilpv4.dev"
 
+  val spspRoutePrefix = "test.jc.money"
+
   val ingressAccount = "lt-lb-ingress"
 
   val fulfillLoopbackAccount = "lt-lb-fulfiller"
 
-  val fulfillLoopbackAddress = "test.jc.money.lt-lb-fulfiller"
+  val fulfillLoopbackAddress = s"""${spspRoutePrefix}.lt-lb-fulfiller"""
 
   val rejectLoopbackAccount = "lt-lb-rejector"
 

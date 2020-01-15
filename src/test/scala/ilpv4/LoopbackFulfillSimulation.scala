@@ -1,6 +1,7 @@
 package ilpv4
 
 import com.google.common.primitives.UnsignedLong
+import feign.FeignException
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import org.slf4j.LoggerFactory
@@ -13,8 +14,18 @@ class LoopbackFulfillSimulation extends Simulation {
   val httpConf = http.baseUrl(Config.javaConnectorUrl)
 
   before {
-    Admin.client.createAccountAsResponse(Accounts.ingress)
-    Admin.client.createAccountAsResponse(Accounts.fulfillLoopback)
+    Admin.accountClient.createAccountAsResponse(Accounts.ingress)
+    Admin.accountClient.createAccountAsResponse(Accounts.fulfillLoopback)
+    try {
+      Admin.routeClient.createStaticRoute(Config.fulfillLoopbackAddress, Routes.fulfillLoopbackRoute)
+    }
+    catch {
+      case e: FeignException => {
+        if (e.status() != 409) {
+          throw e
+        }
+      }
+    }
   }
 
   val prepare = Prepare.create(UnsignedLong.ONE, Config.fulfillLoopbackAddress)
