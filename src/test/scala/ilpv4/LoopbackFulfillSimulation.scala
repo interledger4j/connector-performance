@@ -4,6 +4,7 @@ import com.google.common.primitives.UnsignedLong
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import org.slf4j.LoggerFactory
+import util.IlpChecks._
 import util._
 
 class LoopbackFulfillSimulation extends Simulation {
@@ -21,7 +22,7 @@ class LoopbackFulfillSimulation extends Simulation {
   val sendPayments = scenario("send payments to fulfill loopback")
     .exec(
       ConnectorRequests.ilp(Config.ingressAccount, "shh", prepare)
-        .check(jsonPath("$.code.code").is("T00"))
+        .check(CODE_T00)
     )
 
   setUp(
