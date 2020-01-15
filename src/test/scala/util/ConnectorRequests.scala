@@ -19,6 +19,7 @@ object ConnectorRequests {
   val objectMapper : ObjectMapper = ObjectMapperFactory.create();
 
   def ilp(accountName: String, bearer: String, prepare: InterledgerPreparePacket): HttpRequestBuilder = {
+    logger.trace("[Connector Requests] Sending prepare packet {}", prepare.toString)
     val requestName = s"""[Connector] Send ILP prepare for ${prepare.getAmount.toString()} from ${accountName} to ${prepare.getDestination.getValue}"""
     http(requestName)
       .post("/accounts/" + accountName + "/ilp")
