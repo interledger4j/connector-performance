@@ -18,7 +18,7 @@ object Prepare {
       .amount(amount)
       .destination(InterledgerAddress.of(destination))
       .executionCondition(InterledgerCondition.of(conditionBytes))
-      .expiresAt(DateUtils.now.plusSeconds(5)truncatedTo(ChronoUnit.MILLIS))
+      .expiresAt(DateUtils.now.plusSeconds(30)truncatedTo(ChronoUnit.MILLIS))
       .build()
   }
 

@@ -2,8 +2,7 @@ package ilpv4
 
 import com.google.common.primitives.UnsignedLong
 import io.gatling.core.Predef._
-import io.gatling.http.Predef.http
-import org.interledger.core.InterledgerResponsePacket
+import io.gatling.http.Predef._
 import org.slf4j.LoggerFactory
 import util._
 
@@ -22,13 +21,8 @@ class LoopbackFulfillSimulation extends Simulation {
   val sendPayments = scenario("send payments to fulfill loopback")
     .exec(
       ConnectorRequests.ilp(Config.ingressAccount, "shh", prepare)
-        .check()
+        .check(jsonPath("$.code.code").is("T00"))
     )
-    .exec(session => {
-      val packet = session("ilpResponse").as[InterledgerResponsePacket]
-      //      check(packet.getFulfillment().equals(null)).isTrue()
-      session
-    })
 
   setUp(
 //    sendPayments.inject(constantUsersPerSec(1) during(5))
