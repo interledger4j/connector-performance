@@ -60,6 +60,11 @@
       <artifactId>codecs-ilp</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.interledger.connector</groupId>
+      <artifactId>connector-admin-client</artifactId>
+      <version>HEAD-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>io.gatling.highcharts</groupId>
       <artifactId>gatling-charts-highcharts</artifactId>
       <version>${gatling.version}</version>
