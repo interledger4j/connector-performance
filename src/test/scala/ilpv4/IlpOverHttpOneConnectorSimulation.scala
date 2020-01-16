@@ -15,10 +15,10 @@ class IlpOverHttpOneConnectorSimulation extends Simulation {
   val logger = LoggerFactory.getLogger(classOf[IlpOverHttpOneConnectorSimulation])
   val httpConf = http.baseUrl(Config.javaConnectorUrl)
 
-  Admin.accountClient.createAccountAsResponse(Accounts.ingress)
-  Admin.accountClient.createAccountAsResponse(Accounts.javaSpsp)
+  Admin.client.createAccountAsResponse(Accounts.ingress)
+  Admin.client.createAccountAsResponse(Accounts.javaSpsp)
   try {
-    Admin.routeClient.createStaticRoute(Config.javaSpspAddress, Routes.javaSpspRoute)
+    Admin.client.createStaticRoute(Config.javaSpspAddress, Routes.javaSpspRoute)
   }
   catch {
     case e: FeignException => {

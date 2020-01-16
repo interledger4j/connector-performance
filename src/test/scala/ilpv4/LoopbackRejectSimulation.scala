@@ -14,10 +14,10 @@ class LoopbackRejectSimulation extends Simulation {
   val httpConf = http.baseUrl(Config.javaConnectorUrl)
 
   before {
-    Admin.accountClient.createAccountAsResponse(Accounts.ingress)
-    Admin.accountClient.createAccountAsResponse(Accounts.rejectLoopback)
+    Admin.client.createAccountAsResponse(Accounts.ingress)
+    Admin.client.createAccountAsResponse(Accounts.rejectLoopback)
     try {
-      Admin.routeClient.createStaticRoute(Config.rejectLoopbackAddress, Routes.rejectLoopbackRoute)
+      Admin.client.createStaticRoute(Config.rejectLoopbackAddress, Routes.rejectLoopbackRoute)
     }
     catch {
       case e: FeignException => {

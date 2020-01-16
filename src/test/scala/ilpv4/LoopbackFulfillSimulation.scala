@@ -14,10 +14,10 @@ class LoopbackFulfillSimulation extends Simulation {
   val httpConf = http.baseUrl(Config.javaConnectorUrl)
 
   before {
-    Admin.accountClient.createAccountAsResponse(Accounts.ingress)
-    Admin.accountClient.createAccountAsResponse(Accounts.fulfillLoopback)
+    Admin.client.createAccountAsResponse(Accounts.ingress)
+    Admin.client.createAccountAsResponse(Accounts.fulfillLoopback)
     try {
-      Admin.routeClient.createStaticRoute(Config.fulfillLoopbackAddress, Routes.fulfillLoopbackRoute)
+      Admin.client.createStaticRoute(Config.fulfillLoopbackAddress, Routes.fulfillLoopbackRoute)
     }
     catch {
       case e: FeignException => {
