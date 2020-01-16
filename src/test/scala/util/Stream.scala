@@ -6,7 +6,6 @@ import java.util.Objects
 import java.util.concurrent.atomic.AtomicLong
 
 import com.google.common.collect.Lists
-import com.google.common.hash.Hashing
 import com.google.common.primitives.UnsignedLong
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
@@ -16,8 +15,8 @@ import org.interledger.core._
 import org.interledger.stream.StreamUtils.generatedFulfillableFulfillment
 import org.interledger.stream.crypto.JavaxStreamEncryptionService
 import org.interledger.stream.frames.{ConnectionAssetDetailsFrame, ConnectionNewAddressFrame, StreamFrame, StreamMoneyFrame}
-import org.interledger.stream.sender.{StreamConnectionManager, StreamSenderException}
-import org.interledger.stream.{Denomination, StreamConnection, StreamConnectionId, StreamPacket}
+import org.interledger.stream.sender.StreamSenderException
+import org.interledger.stream.{Denomination, StreamPacket}
 import org.slf4j.LoggerFactory
 
 object Stream {
@@ -31,12 +30,6 @@ object Stream {
   val sequence = new AtomicLong(0L)
 
   def nextSequence(): UnsignedLong = UnsignedLong.valueOf(sequence.incrementAndGet)
-
-  def getStreamConnectionId(sharedSecret: SharedSecret, receiverAddress: InterledgerAddress): StreamConnectionId =
-    StreamConnectionId.of(Hashing.hmacSha256(sharedSecret.key).hashBytes(receiverAddress.getValue.getBytes).toString)
-
-  def getStreamConnection(destination: InterledgerAddress, sharedSecret: SharedSecret): StreamConnection = new StreamConnectionManager()
-    .openConnection(getStreamConnectionId(sharedSecret, destination))
 
   def preflightCheck(senderAccountName: String, bearer: String, sharedSecret: SharedSecret, destination: InterledgerAddress,
                      senderDenomination: Denomination): HttpRequestBuilder = {
