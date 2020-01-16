@@ -15,4 +15,9 @@ object Routes {
     .routePrefix(InterledgerAddressPrefix.of(Config.rejectLoopbackAddress))
     .nextHopAccountId(AccountId.of(Config.rejectLoopbackAccount))
     .build()
+
+  val javaSpspRoute = StaticRoute.builder()
+    .routePrefix(InterledgerAddressPrefix.of(Config.javaSpspAddress))
+    .nextHopAccountId(AccountId.of(Config.javaSpspAccount))
+    .build()
 }

@@ -1,15 +1,11 @@
 package util
 
-import java.io.ByteArrayInputStream
-
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.http.request.builder.HttpRequestBuilder
-import io.gatling.http.response.StringResponseBody
-import org.interledger.codecs.ilp.InterledgerCodecContextFactory
 import org.interledger.connector.jackson.ObjectMapperFactory
-import org.interledger.core.{InterledgerPreparePacket, InterledgerResponsePacket}
+import org.interledger.core.InterledgerPreparePacket
 import org.slf4j.LoggerFactory
 
 object ConnectorRequests {
@@ -29,13 +25,6 @@ object ConnectorRequests {
       .body(ByteArrayBody(Prepare.serialize(prepare)))
       .check(status.is(200))
       .check(bodyBytes.exists)
-      .transformResponse((session, response) => {
-        val context = InterledgerCodecContextFactory.oer()
-        val bas = new ByteArrayInputStream(response.body.bytes)
-        val responsePacket: InterledgerResponsePacket = context.read(classOf[InterledgerResponsePacket], bas)
-        val ilpJson = objectMapper.writeValueAsString(responsePacket)
-        logger.trace("[Connector Requests] Deserialized ILP response to {}", ilpJson)
-        response.copy(body = new StringResponseBody(ilpJson, response.charset))
-      })
+      .transformResponse(Transformers.convertIlpResponseToJson)
   }
 }

@@ -60,6 +60,22 @@
       <artifactId>codecs-ilp</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.interledger</groupId>
+      <artifactId>stream-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.interledger</groupId>
+      <artifactId>codecs-stream</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.interledger</groupId>
+      <artifactId>stream-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.interledger</groupId>
+      <artifactId>spsp-client</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.interledger.connector</groupId>
       <artifactId>connector-admin-client</artifactId>
       <version>HEAD-SNAPSHOT</version>
