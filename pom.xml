@@ -223,7 +223,7 @@
 
   <profiles>
     <profile>
-      <id>run-performance-tests</id>
+      <id>perf-all</id>
       <build>
         <plugins>
           <plugin>

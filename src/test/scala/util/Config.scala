@@ -19,11 +19,11 @@ object Config {
 
   val fulfillLoopbackAccount = "lt-lb-fulfiller"
 
+  val rejectLoopbackAccount = "lt-lb-rejector"
+
   val fulfillLoopbackAddress = s"""${spspRoutePrefix}.${fulfillLoopbackAccount}"""
 
   val rejectLoopbackAddress = s"""${spspRoutePrefix}.${rejectLoopbackAccount}"""
-
-  val rejectLoopbackAccount = "lt-lb-rejector"
 
   val basicAuthHeader = "Basic YWRtaW46cGFzc3dvcmQ="
 }
