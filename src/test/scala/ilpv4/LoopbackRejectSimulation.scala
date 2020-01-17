@@ -28,11 +28,9 @@ class LoopbackRejectSimulation extends Simulation {
     }
   }
 
-  val prepare = Prepare.create(UnsignedLong.ONE, Config.rejectLoopbackAddress)
-
   val sendPayments = scenario("send payments to reject loopback")
     .exec(
-      ConnectorRequests.ilp(Config.ingressAccount, "shh", prepare)
+      ConnectorRequests.ilp(Config.ingressAccount, "shh", Prepare.create(UnsignedLong.ONE, Config.rejectLoopbackAddress))
         .check(REJECTED_T02)
     )
 

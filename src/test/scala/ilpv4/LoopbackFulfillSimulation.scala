@@ -10,6 +10,11 @@ import util._
 
 class LoopbackFulfillSimulation extends Simulation {
 
+  val t_concurrency = Integer.getInteger("concurrency", 10).toInt
+  val t_rampUp = Integer.getInteger("ramp-up", 1).toInt
+  val t_holdFor = Integer.getInteger("hold-for", 60).toInt
+  val t_throughput = Integer.getInteger("throughput", 100).toInt
+
   val logger = LoggerFactory.getLogger(classOf[LoopbackFulfillSimulation])
   val httpConf = http.baseUrl(Config.javaConnectorUrl)
 
@@ -28,16 +33,25 @@ class LoopbackFulfillSimulation extends Simulation {
     }
   }
 
-  val prepare = Prepare.create(UnsignedLong.ONE, Config.fulfillLoopbackAddress)
-
   val sendPayments = scenario("send payments to fulfill loopback")
-    .exec(
-      ConnectorRequests.ilp(Config.ingressAccount, "shh", prepare)
-        .check(FULFILLED)
-    )
+    .forever {
+      exec(
+        ConnectorRequests.ilp(Config.ingressAccount, "shh", Prepare.create(UnsignedLong.ONE, Config.fulfillLoopbackAddress))
+          .check(FULFILLED)
+      )
+    }
 
-  setUp(
-//    sendPayments.inject(constantUsersPerSec(1) during(5))
-    sendPayments.inject(atOnceUsers(1))
-  ).protocols(httpConf)
+  val execution = sendPayments
+//    .inject(rampUsers(t_concurrency) over t_rampUp)
+    .inject(atOnceUsers(t_concurrency))
+    .protocols(httpConf)
+
+  setUp(execution).
+    throttle(jumpToRps(t_throughput), holdFor(t_holdFor)).
+    maxDuration(t_rampUp + t_holdFor)
+
+//  setUp(
+//    sendPayments.inject(rampUsers(threads) during (rampup seconds))
+////    sendPayments.inject(atOnceUsers(1))
+//  ).protocols(httpConf)
 }

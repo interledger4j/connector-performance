@@ -2,22 +2,25 @@ package util
 
 import java.io.ByteArrayOutputStream
 import java.time.temporal.ChronoUnit
-import java.util.Random
 
 import com.google.common.primitives.UnsignedLong
 import org.interledger.codecs.ilp.InterledgerCodecContextFactory
-import org.interledger.core.{DateUtils, InterledgerAddress, InterledgerCondition, InterledgerConstants, InterledgerPreparePacket}
+import org.interledger.core.{DateUtils, InterledgerAddress, InterledgerConstants, InterledgerPreparePacket}
+import org.slf4j.LoggerFactory
 
 object Prepare {
 
+  val logger = LoggerFactory.getLogger(getClass)
+
   def create(amount: UnsignedLong, destination: String): InterledgerPreparePacket = {
-    
-    InterledgerPreparePacket.builder()
+    val prepare = InterledgerPreparePacket.builder()
       .amount(amount)
       .destination(InterledgerAddress.of(destination))
       .executionCondition(InterledgerConstants.ALL_ZEROS_CONDITION)
-      .expiresAt(DateUtils.now.plusSeconds(30)truncatedTo(ChronoUnit.MILLIS))
+      .expiresAt(DateUtils.now.plus(1, ChronoUnit.DAYS).truncatedTo(ChronoUnit.MILLIS))
       .build()
+    logger.trace("[Prepare] Created prepare packet: {}", prepare)
+    prepare
   }
 
   def createAndSerialize(amount: UnsignedLong, destination: String): Array[Byte] = {
