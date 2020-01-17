@@ -137,7 +137,9 @@
         <version>4.3.0</version>
         <executions>
           <execution>
+            <phase>process-resources</phase>
             <goals>
+              <goal>add-source</goal>
               <goal>compile</goal>
               <goal>testCompile</goal>
             </goals>
@@ -147,31 +149,46 @@
           <scalaVersion>${scala.version}</scalaVersion>
         </configuration>
       </plugin>
-<!--      <plugin>-->
-<!--        <groupId>org.apache.maven.plugins</groupId>-->
-<!--        <artifactId>maven-shade-plugin</artifactId>-->
-<!--        <version>3.2.1</version>-->
-<!--        <executions>-->
-<!--          <execution>-->
-<!--            <phase>package</phase>-->
-<!--            <goals>-->
-<!--              <goal>shade</goal>-->
-<!--            </goals>-->
-<!--            <configuration>-->
-<!--              <artifactSet>-->
-<!--                <excludes>-->
-<!--                  <exclude>classworlds:classworlds</exclude>-->
-<!--                  <exclude>junit:junit</exclude>-->
-<!--                  <exclude>jmock:*</exclude>-->
-<!--                  <exclude>*:xml-apis</exclude>-->
-<!--                  <exclude>org.apache.maven:lib:tests</exclude>-->
-<!--                  <exclude>log4j:log4j:jar:</exclude>-->
-<!--                </excludes>-->
-<!--              </artifactSet>-->
-<!--            </configuration>-->
-<!--          </execution>-->
-<!--        </executions>-->
-<!--      </plugin>-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>io.gatling.app.Gatling</mainClass>
+                </transformer>
+              </transformers>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <artifactSet>
+                <excludes>
+                  <exclude>classworlds:classworlds</exclude>
+                  <exclude>junit:junit</exclude>
+                  <exclude>jmock:*</exclude>
+                  <exclude>*:xml-apis</exclude>
+                  <exclude>org.apache.maven:lib:tests</exclude>
+                  <exclude>log4j:log4j:jar:</exclude>
+                </excludes>
+              </artifactSet>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
@@ -262,19 +279,31 @@
     <profile>
       <id>perf-all</id>
       <build>
+        <resources>
+          <resource>
+            <filtering>true</filtering><directory>${project.basedir}/src/main/resources</directory>
+            <targetPath>${project.build.directory}</targetPath>
+            <includes>
+              <include>run.sh</include>
+              <include>logback.xml</include>
+            </includes>
+          </resource>
+        </resources>
         <plugins>
           <plugin>
             <groupId>io.gatling</groupId>
             <artifactId>gatling-maven-plugin</artifactId>
             <configuration>
               <runMultipleSimulations>true</runMultipleSimulations>
+              <configFolder>src/main/resources</configFolder>
+              <simulationsFolder>src/main/scala/ilpv4</simulationsFolder>
             </configuration>
             <executions>
               <execution>
                 <phase>verify</phase>
-                <goals>
+                <!--<goals>
                   <goal>test</goal>
-                </goals>
+                </goals>-->
               </execution>
             </executions>
           </plugin>

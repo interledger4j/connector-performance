@@ -1,5 +1,8 @@
 *.iml
 
+### Gatling results
+results
+
 ### Maven template
 target/
 pom.xml.tag

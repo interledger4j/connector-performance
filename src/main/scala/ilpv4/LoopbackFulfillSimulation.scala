@@ -12,7 +12,7 @@ class LoopbackFulfillSimulation extends Simulation {
 
   val t_concurrency = Integer.getInteger("concurrency", 10).toInt
   val t_rampUp = Integer.getInteger("ramp-up", 1).toInt
-  val t_holdFor = Integer.getInteger("hold-for", 60).toInt
+  val t_holdFor = Integer.getInteger("hold-for", 5).toInt
   val t_throughput = Integer.getInteger("throughput", 100).toInt
 
   val logger = LoggerFactory.getLogger(classOf[LoopbackFulfillSimulation])

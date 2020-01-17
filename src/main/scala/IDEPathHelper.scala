@@ -7,10 +7,10 @@ object IDEPathHelper {
   val gatlingConfUrl: Path = getClass.getClassLoader.getResource("gatling.conf")
   val projectRootDir = gatlingConfUrl.ancestor(3)
 
-  val mavenSourcesDirectory = projectRootDir / "src" / "test" / "scala"
-  val mavenResourcesDirectory = projectRootDir / "src" / "test" / "resources"
+  val mavenSourcesDirectory = projectRootDir / "src" / "main" / "scala"
+  val mavenResourcesDirectory = projectRootDir / "src" / "main" / "resources"
   val mavenTargetDirectory = projectRootDir / "target"
-  val mavenBinariesDirectory = mavenTargetDirectory / "test-classes"
+  val mavenBinariesDirectory = mavenTargetDirectory / "classes"
 
   val resourcesDirectory = mavenResourcesDirectory
   val recorderSimulationsDirectory = mavenSourcesDirectory
