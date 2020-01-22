@@ -255,14 +255,52 @@ More to come...
 
 This description is a bottom up account of the process we're using, rather than top down.
 
+### Service Account
+
+One of the tricky bits to get this all working was that we don't want to have a ton of VMs kicking about after a load 
+test is run because it's just a waste of money: the tests only run for so long and then the VM isn't useful anymore. To
+accomplish this, we needed the VM to be able to tear itself down at the end of its execution. This is accomplished via 
+a service account that has the following role attached to it:
+
+```
+name: ilp-performance-teardown
+permissions:
+  compute.disks.delete
+  compute.instances.delete
+  compute.instances.deleteAccessConfig
+```
+
+The service account will need the `ilp-performance-teardown` role as well as the following roles:
+```
+name: ilp-performance-self-destruct
+roles:
+  ilp-performance-teardown
+  Logs Writer
+  Storage Admin
+```
+
+Adding `Logs Writer` gives access to the `gcloud logging write` command. We end up needing `Storage Admin` to be able 
+to mount a Storage Bucket within the VM to a path that allows for publishing of the Gatling reports.
+
+### Storage Bucket
+
+Nothing particularly fancy about this: we just need some storage bucket to write our reports to.
+
+The fancier bit happens during machine creation since we end up mounting the bucket via `gcsfuse` to a path the Docker
+container will write the results to.
+
 ### Cloud Function for creating VMs
 
 We rely on a Google Cloud function that will spawn a virtual machine configured with Docker and the container we seek 
-to run
+to run. The machine created 
 
 ```json
 {
-  "simulation": "SomeSimulation"
+  "simulation": "SomeSimulation",
+  "concurrency": "number",
+  "rampUp": "number of seconds",
+  "holdFor": "number of seconds",
+  "throughput": "number"
 }
 ```
 
