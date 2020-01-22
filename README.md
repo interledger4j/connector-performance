@@ -245,11 +245,13 @@ This is due to our use of the Gatling framework which is Scala based and seems t
 later versions of Java.
 
 ## Docker container parameters
-* `-e SIMULATION=<simulation name` specifies the test to be run
+* `-e SIMULATION="simulation name"` specifies the test to be run
+* `-e CONCURRENCY=number` number of threads or users
+* `-e RAMP_UP=duration` interval to add new users 
+* `-e THROUGHPUT=number`
+* `-e HOLD_FOR=duration` hold the current throughput for a given duration.
 * `-v /path/to/results:results` mounts a volume to the location where Gatling writes reports. In GCP cases 
 `/path/to/results` will likely be a GCP Storage Bucket.
-
-More to come...
 
 ## High level overview
 
@@ -284,15 +286,22 @@ to mount a Storage Bucket within the VM to a path that allows for publishing of 
 
 ### Storage Bucket
 
-Nothing particularly fancy about this: we just need some storage bucket to write our reports to.
+Nothing particularly fancy about this: we just need some storage bucket to write our reports to. The only specific 
+setting that is (currently) necessary is that the bucket be publicly viewable in order to see the reports render.
 
 The fancier bit happens during machine creation since we end up mounting the bucket via `gcsfuse` to a path the Docker
 container will write the results to.
 
 ### Cloud Function for creating VMs
 
+The JavaScript for this function can be found in [the gcp-resources/cloud-function/index.js file](gcp-resources/cloud-function/index.js).
+
 We rely on a Google Cloud function that will spawn a virtual machine configured with Docker and the container we seek 
-to run. The machine created 
+to run. The machine created runs with the service account specified above which allows it to run a command to kill 
+itself after the job completes.
+
+The function accepts a JSON payload to allow configuration of the load test. Below is an example object that contains
+the field names we care about for executing a test. 
 
 ```json
 {
@@ -303,6 +312,19 @@ to run. The machine created
   "throughput": "number"
 }
 ```
+
+The job is triggered by being subscribed to a Pub/Sub topic that can receive messages detailing what job should be run 
+and how it should be configured.
+
+### Pub/Sub Topic and Scheduler
+
+These two are totally intertwined with one another and should just be described together.
+
+We have a Cloud Scheduler job set up that sends a message to a Pub/Sub topic containing details about the test to be 
+executed. The plan at the present is to right jobs nightly (though they should be staggered to avoid resource 
+contention), creating a VM for each job. 
+
+The job can be configured with a payload that allows for passing configuration for the load test.
 
 ## Resources
 
