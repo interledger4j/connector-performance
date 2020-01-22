@@ -235,3 +235,43 @@ Coming soon.
 ## Four Connectors with ILP-over-HTTP
 Coming soon.
 
+# GCP Infrastructure and resources
+
+Load tests are executed via Google Cloud Platform in a setup that largely reflects the AWS Fargate product.
+
+The load tests are contained within a configurable Docker container called `interledger4j/ilp-performance`. This
+container has an executable jar inside of it and is based on Alpine Java 8 at the time of this document being written. 
+This is due to our use of the Gatling framework which is Scala based and seems to have indigestion when it comes to
+later versions of Java.
+
+## Docker container parameters
+* `-e SIMULATION=<simulation name` specifies the test to be run
+* `-v /path/to/results:results` mounts a volume to the location where Gatling writes reports. In GCP cases 
+`/path/to/results` will likely be a GCP Storage Bucket.
+
+More to come...
+
+## High level overview
+
+This description is a bottom up account of the process we're using, rather than top down.
+
+### Cloud Function for creating VMs
+
+We rely on a Google Cloud function that will spawn a virtual machine configured with Docker and the container we seek 
+to run
+
+```json
+{
+  "simulation": "SomeSimulation"
+}
+```
+
+## Resources
+
+https://medium.com/google-cloud/running-a-serverless-batch-workload-on-gcp-with-cloud-scheduler-cloud-functions-and-compute-86c2bd573f25
+
+https://medium.com/google-cloud/manage-google-compute-engine-with-node-js-eef8e7a111b4
+
+https://stackoverflow.com/questions/32856043/mount-google-cloud-storage-bucket-to-instance
+
+https://medium.com/google-cloud/scheduled-mirror-sync-sftp-to-gcs-b167d0eb487a
