@@ -2,6 +2,12 @@ package util
 
 object Config {
 
+  // simulation parameters
+  val concurrency = Integer.getInteger("concurrency", 10).toInt
+  val rampUp = Integer.getInteger("ramp-up", 1).toInt
+  val holdFor = Integer.getInteger("hold-for", 5).toInt
+  val throughput = Integer.getInteger("throughput", 100).toInt
+
   val javaConnectorUrl = "https://connector-load.ilpv4.dev"
 //  val javaConnectorUrl = "http://localhost:8080"
 

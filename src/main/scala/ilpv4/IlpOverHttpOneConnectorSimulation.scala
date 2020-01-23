@@ -3,7 +3,6 @@ package ilpv4
 import java.util.concurrent.atomic.{AtomicInteger, AtomicReference}
 
 import com.google.common.primitives.UnsignedLong
-import feign.FeignException
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import org.interledger.spsp.{PaymentPointer, StreamConnectionDetails}
@@ -17,24 +16,12 @@ class IlpOverHttpOneConnectorSimulation extends Simulation {
 
   Admin.client.createAccountAsResponse(Accounts.ingress)
   Admin.client.createAccountAsResponse(Accounts.javaSpsp)
-  try {
-    Admin.client.createStaticRoute(Config.javaSpspAddress, Routes.javaSpspRoute)
-  }
-  catch {
-    case e: FeignException => {
-      if (e.status() != 409) {
-        throw e
-      }
-    }
-  }
+  Admin.safeCreateStaticRoute(Config.javaSpspAddress, Routes.javaSpspRoute)
 
   val details = new AtomicReference[StreamConnectionDetails]()
   val streamDetails = Admin.spspClient.getStreamConnectionDetails(PaymentPointer.of(Config.javaSpspPaymentPointer))
   details.set(streamDetails)
   println(details.get())
-//  before {
-//
-//  }
 
   val totalAmount = new AtomicInteger(1000);
 
@@ -44,13 +31,15 @@ class IlpOverHttpOneConnectorSimulation extends Simulation {
         Stream.preflightCheck(Config.javaSpspAccount, "shh", details.get().sharedSecret(),
           details.get().destinationAddress(), Accounts.javaSpspDenomination)
       )
-      .exec(
+    .repeat(10) {
+      exec(
         Stream.sendStreamPacket(Config.javaSpspAccount, "shh", details.get().sharedSecret(), UnsignedLong.ONE,
           details.get().destinationAddress())
       )
+    }
 
   setUp(
-    sendPayments.inject(constantUsersPerSec(10) during(15))
+    sendPayments.inject(constantUsersPerSec(Config.concurrency) during(Config.holdFor))
 //    sendPayments.inject(atOnceUsers(1))
   ).protocols(httpConf)
 }
