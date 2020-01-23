@@ -316,6 +316,24 @@ the field names we care about for executing a test.
 The job is triggered by being subscribed to a Pub/Sub topic that can receive messages detailing what job should be run 
 and how it should be configured.
 
+#### Notes about the VM settings
+
+Most of the magic happens in the startup script, which does the following:
+* Installs `gcsfuse` and mounts the Storage Bucket so load test reports are available after the VM is removed
+* Installs `docker`
+* Runs the load test container and waits for it to finish
+* Shuts itself down at the end of the load test
+
+Beyond that, the following should be configured:
+* The service account needs to be the one you created with self-destruct capabilities
+* You should use at least 2 CPUs
+
+We didn't end up using a VM that allows for direct configuration of a Docker container due to complications with GCP's
+Container Optimized OS. That OS requires running a command called `toolbox` to do things like issue `gcloud` commands,
+but due to the requirement of needing to execute tasks within a shell script we abandoned seeking a solution because 
+`toolbox` essentially creates a new shell and we didn't see a clear way to pipe commands to it. We also didn't see 
+an especially clean way of installing `gcsfuse` on that versio of the OS.
+
 ### Pub/Sub Topic and Scheduler
 
 These two are totally intertwined with one another and should just be described together.

@@ -4,6 +4,8 @@ const compute = new Compute();
 
 const zone = 'us-central1-a';
 
+const gcpProjectId = 'java-connector-test';
+
 exports.createInstance = (event, context) => {
   const vmName = 'ilp-performance-test-executor' + Date.now();
 
@@ -26,8 +28,8 @@ exports.createInstance = (event, context) => {
     {
       "kind": "compute#instance",
       "name": `load-test-executor-${Date.now()}`,
-      "zone": "projects/java-connector-test/zones/us-central1-a",
-      "machineType": "projects/java-connector-test/zones/us-central1-a/machineTypes/n1-standard-2",
+      "zone": `projects/${gcpProjectId}/zones/us-central1-a`,
+      "machineType": `projects/${gcpProjectId}/zones/us-central1-a/machineTypes/n1-standard-2`,
       "displayDevice": {
         "enableDisplay": false
       },
@@ -74,7 +76,7 @@ gcloud compute instances delete $(hostname) --zone \${gcp_zone}`
           "deviceName": "instance-1",
           "initializeParams": {
             "sourceImage": "projects/debian-cloud/global/images/debian-9-stretch-v20191210",
-            "diskType": "projects/java-connector-test/zones/us-central1-a/diskTypes/pd-standard",
+            "diskType": `projects/${gcpProjectId}/zones/us-central1-a/diskTypes/pd-standard`,
             "diskSizeGb": "10"
           },
           "diskEncryptionKey": {}
@@ -84,7 +86,7 @@ gcloud compute instances delete $(hostname) --zone \${gcp_zone}`
       "networkInterfaces": [
         {
           "kind": "compute#networkInterface",
-          "subnetwork": "projects/java-connector-test/regions/us-central1/subnetworks/default",
+          "subnetwork": `projects/${gcpProjectId}/regions/us-central1/subnetworks/default`,
           "accessConfigs": [
             {
               "kind": "compute#accessConfig",
@@ -110,7 +112,7 @@ gcloud compute instances delete $(hostname) --zone \${gcp_zone}`
       },
       "serviceAccounts": [
         {
-          "email": "ilp-performance-self-destruct@java-connector-test.iam.gserviceaccount.com",
+          "email": `ilp-performance-self-destruct@${gcpProjectId}.iam.gserviceaccount.com`,
           "scopes": [
             "https://www.googleapis.com/auth/cloud-platform"
           ]
