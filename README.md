@@ -334,7 +334,7 @@ We didn't end up using a VM that allows for direct configuration of a Docker con
 Container Optimized OS. That OS requires running a command called `toolbox` to do things like issue `gcloud` commands,
 but due to the requirement of needing to execute tasks within a shell script we abandoned seeking a solution because 
 `toolbox` essentially creates a new shell and we didn't see a clear way to pipe commands to it. We also didn't see 
-an especially clean way of installing `gcsfuse` on that versio of the OS.
+an especially clean way of installing `gcsfuse` on that version of the OS.
 
 ### Pub/Sub Topic and Scheduler
 
