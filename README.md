@@ -325,6 +325,8 @@ Most of the magic happens in the startup script, which does the following:
 * Shuts itself down at the end of the load test
 
 Beyond that, the following should be configured:
+* Currently we're using commands compatible with Debian GNU/Linux 9, but there's not a strict limitation of that distro
+(though the script would be incompatible with non apt-based distros)
 * The service account needs to be the one you created with self-destruct capabilities
 * You should use at least 2 CPUs
 
