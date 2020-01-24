@@ -31,7 +31,7 @@ class IlpOverHttpOneConnectorSimulation extends Simulation {
         Stream.preflightCheck(Config.javaSpspAccount, "shh", details.get().sharedSecret(),
           details.get().destinationAddress(), Accounts.javaSpspDenomination)
       )
-    .repeat(10) {
+    .repeat(Config.throughput) {
       exec(
         Stream.sendStreamPacket(Config.javaSpspAccount, "shh", details.get().sharedSecret(), UnsignedLong.ONE,
           details.get().destinationAddress())
@@ -40,6 +40,5 @@ class IlpOverHttpOneConnectorSimulation extends Simulation {
 
   setUp(
     sendPayments.inject(constantUsersPerSec(Config.concurrency) during(Config.holdFor))
-//    sendPayments.inject(atOnceUsers(1))
   ).protocols(httpConf)
 }
