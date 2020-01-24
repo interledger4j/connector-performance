@@ -58,7 +58,7 @@ sudo apt-get install -y docker-ce
 sudo docker run -e SIMULATION=${simulationDetails.simulation} -e CONCURRENCY=${simulationDetails.concurrency} -e RAMP_UP=${simulationDetails.rampUp} -e HOLD_FOR=${simulationDetails.holdFor} -e THROUGHPUT=${simulationDetails.throughput} -v /var/log/load-tests:/results --name loadtest interledger4j/ilp-performance &> output.log
 sudo docker wait loadtest
 cat output.log
-gcloud logging write load-test-execution "Load test execution results for ${simulationDetails.simulation} from ${vmName}: \`cat output.log\`"
+while read line; do gcloud logging write load-test-execution "Load test ${simulationDetails.simulation} at ${vmName}: $line"; done <output.log
 gcp_zone=$(curl -H Metadata-Flavor:Google http://metadata.google.internal/computeMetadata/v1/instance/zone -s | cut -d/ -f4)
 gcloud logging write load-test-execution "Shutting down vm with command: gcloud compute instances delete $(hostname) --zone \${gcp_zone}"
 gcloud compute instances delete $(hostname) --zone \${gcp_zone}`
