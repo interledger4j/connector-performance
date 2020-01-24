@@ -360,3 +360,5 @@ https://medium.com/google-cloud/manage-google-compute-engine-with-node-js-eef8e7
 https://stackoverflow.com/questions/32856043/mount-google-cloud-storage-bucket-to-instance
 
 https://medium.com/google-cloud/scheduled-mirror-sync-sftp-to-gcs-b167d0eb487a
+
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-debian-9

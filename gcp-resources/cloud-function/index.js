@@ -7,7 +7,7 @@ const zone = 'us-central1-a';
 const gcpProjectId = 'java-connector-test';
 
 exports.createInstance = (event, context) => {
-  const vmName = 'ilp-performance-test-executor' + Date.now();
+  const vmName = `load-test-executor-${Date.now()}`;
 
   console.log('event', event);
 
@@ -27,7 +27,7 @@ exports.createInstance = (event, context) => {
   const vmConfig =
     {
       "kind": "compute#instance",
-      "name": `load-test-executor-${Date.now()}`,
+      "name": vmName,
       "zone": `projects/${gcpProjectId}/zones/us-central1-a`,
       "machineType": `projects/${gcpProjectId}/zones/us-central1-a/machineTypes/n1-standard-2`,
       "displayDevice": {
@@ -56,7 +56,7 @@ sudo apt-get install -y docker-ce
 sudo docker run -e SIMULATION=${simulationDetails.simulation} -e CONCURRENCY=${simulationDetails.concurrency} -e RAMP_UP=${simulationDetails.rampUp} -e HOLD_FOR=${simulationDetails.holdFor} -e THROUGHPUT=${simulationDetails.throughput} -v /var/log/load-tests:/results --name loadtest interledger4j/ilp-performance &> output.log
 sudo docker wait loadtest
 cat output.log
-gcloud logging write load-test-execution $(cat output.log)
+gcloud logging write load-test-execution "Load test execution results for ${simulationDetails.simulation} from ${vmName}: \`cat output.log\`"
 gcp_zone=$(curl -H Metadata-Flavor:Google http://metadata.google.internal/computeMetadata/v1/instance/zone -s | cut -d/ -f4)
 gcloud logging write load-test-execution "Shutting down vm with command: gcloud compute instances delete $(hostname) --zone \${gcp_zone}"
 gcloud compute instances delete $(hostname) --zone \${gcp_zone}`
