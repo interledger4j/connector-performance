@@ -4,7 +4,9 @@ const compute = new Compute();
 
 const zone = 'us-central1-a';
 
-const gcpProjectId = 'java-connector-test';
+const gcpProjectId = 'xpring-dev-sandbox';
+
+const resultsBucket = 'ilp4j-load-test-results';
 
 exports.createInstance = (event, context) => {
   const vmName = `load-test-executor-${Date.now()}`;
@@ -46,7 +48,7 @@ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 sudo mkdir -p /var/log/load-tests
 sudo apt-get update
 sudo apt-get install -y gcsfuse
-sudo gcsfuse ilp-shenanigans-load-test-results /var/log/load-tests
+sudo gcsfuse ${resultsBucket} /var/log/load-tests
 sudo apt install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
