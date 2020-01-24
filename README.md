@@ -294,6 +294,12 @@ to mount a Storage Bucket within the VM to a path that allows for publishing of 
 Nothing particularly fancy about this: we just need some storage bucket to write our reports to. The only specific 
 setting that is (currently) necessary is that the bucket be publicly viewable in order to see the reports render.
 
+The following roles need to be set for the member `allUsers`:
+```
+Storage Legacy Bucket Reader
+Storage Object Viewer
+```
+
 The fancier bit happens during machine creation since we end up mounting the bucket via `gcsfuse` to a path the Docker
 container will write the results to.
 
