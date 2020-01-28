@@ -16,4 +16,4 @@ echo rampUp: "$rampUp"
 echo holdFor: "$holdFor"
 echo throughput: "$throughput"
 
-java -Dconcurrency="$concurrency" -Dramp-up="$rampUp" -Dhold-for="$holdFor" -Dthroughput="$throughput" -cp "$JAR_LOCATION" io.gatling.app.Gatling -s "$simulation_name"
+java -server -Xmx6g -Dconcurrency="$concurrency" -Dramp-up="$rampUp" -Dhold-for="$holdFor" -Dthroughput="$throughput" -cp "$JAR_LOCATION" io.gatling.app.Gatling -s "$simulation_name"

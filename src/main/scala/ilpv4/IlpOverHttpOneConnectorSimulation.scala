@@ -9,6 +9,8 @@ import org.interledger.spsp.{PaymentPointer, StreamConnectionDetails}
 import org.slf4j.LoggerFactory
 import util._
 
+import scala.concurrent.duration._
+
 class IlpOverHttpOneConnectorSimulation extends Simulation {
 
   val logger = LoggerFactory.getLogger(classOf[IlpOverHttpOneConnectorSimulation])
@@ -31,7 +33,7 @@ class IlpOverHttpOneConnectorSimulation extends Simulation {
         Stream.preflightCheck(Config.javaSpspAccount, "shh", details.get().sharedSecret(),
           details.get().destinationAddress(), Accounts.javaSpspDenomination)
       )
-    .repeat(10) {
+    .repeat(Config.throughput) {
       exec(
         Stream.sendStreamPacket(Config.javaSpspAccount, "shh", details.get().sharedSecret(), UnsignedLong.ONE,
           details.get().destinationAddress())
@@ -39,7 +41,6 @@ class IlpOverHttpOneConnectorSimulation extends Simulation {
     }
 
   setUp(
-    sendPayments.inject(constantUsersPerSec(Config.concurrency) during(Config.holdFor))
-//    sendPayments.inject(atOnceUsers(1))
+    sendPayments.inject(constantUsersPerSec(Config.concurrency) during(Config.holdFor minutes))
   ).protocols(httpConf)
 }
